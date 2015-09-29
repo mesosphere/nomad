@@ -18,8 +18,8 @@ resource "google_compute_instance" "client" {
   count         = "${var.count}"
   zone          = "${var.zone}"
   disk {
-    image         = "${var.image}"
-    size          = "${var.size}"
+    image       = "${var.image}"
+    size        = "${var.size}"
   }
   ssh_keys      = ["${split(",", var.ssh_keys)}"]
   machine_type  = "n1-standard-2"
