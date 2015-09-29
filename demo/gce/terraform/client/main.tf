@@ -1,25 +1,28 @@
 variable "count" {}
 variable "image" {}
-variable "region" {}
-variable "size" { default = "1gb" }
+variable "zone" { default = "us-central1-c"}
+variable "size" { default = "10gb" }
 variable "servers" {}
 variable "ssh_keys" {}
 
 resource "template_file" "client_config" {
   filename = "${path.module}/client.hcl.tpl"
   vars {
-    datacenter = "${var.region}"
+    datacenter = "${var.zone}"
     servers    = "${split(",", var.servers)}"
   }
 }
 
-resource "digitalocean_droplet" "client" {
-  image    = "${var.image}"
-  name     = "nomad-client-${var.region}-${count.index}"
-  count    = "${var.count}"
-  size     = "${var.size}"
-  region   = "${var.region}"
-  ssh_keys = ["${split(",", var.ssh_keys)}"]
+resource "google_compute_instance" "client" {
+  image         = "${var.image}"
+  name          = "nomad-client-${count.index}"
+  count         = "${var.count}"
+  size          = "${var.size}"
+  zone          = "${var.zone}"
+  ssh_keys      = ["${split(",", var.ssh_keys)}"]
+  machine_type  = "n1-standard-2"
+  tags          = ["nomad"]
+
 
   provisioner "remote-exec" {
     inline = <<CMD

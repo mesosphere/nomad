@@ -14,22 +14,23 @@ module "statsite" {
 module "servers" {
   source   = "./server"
   image    = "${atlas_artifact.nomad-demo.id}"
+  count    = 1
   ssh_keys = "${var.ssh_keys}"
   statsite = "${module.statsite.addr}"
 }
 
-module "clients-nyc3" {
+module "clients" {
   source   = "./client"
-  region   = "nyc3"
-  count    = 500
+  zone     = "us-central1-c"
+  count    = 4
   image    = "${atlas_artifact.nomad-demo.id}"
   servers  = "${module.servers.addrs}"
   ssh_keys = "${var.ssh_keys}"
 }
 
-module "clients-ams2" {
+/*module "clients-ams2" {
   source   = "./client"
-  region   = "ams2"
+  zone   = "ams2"
   count    = 500
   image    = "${atlas_artifact.nomad-demo.id}"
   servers  = "${module.servers.addrs}"
@@ -38,7 +39,7 @@ module "clients-ams2" {
 
 module "clients-ams3" {
   source   = "./client"
-  region   = "ams3"
+  zone   = "ams3"
   count    = 500
   image    = "${atlas_artifact.nomad-demo.id}"
   servers  = "${module.servers.addrs}"
@@ -47,13 +48,13 @@ module "clients-ams3" {
 
 module "clients-sfo1" {
   source   = "./client"
-  region   = "sfo1"
+  zone   = "sfo1"
   count    = 500
   image    = "${atlas_artifact.nomad-demo.id}"
   servers  = "${module.servers.addrs}"
   ssh_keys = "${var.ssh_keys}"
 }
-
+*/
 output "Nomad Servers" {
   value = "${join(" ", split(",", module.servers.addrs))}"
 }

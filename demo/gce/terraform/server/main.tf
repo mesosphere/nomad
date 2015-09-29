@@ -1,21 +1,23 @@
 variable "image" {}
-variable "region" {}
-variable "size" { default = "8gb" }
+variable "zone" { default = "us-central1-c"}
+variable "size" { default = "10gb" }
 variable "ssh_keys" {}
 variable "statsite" {}
 
-resource "digitalocean_droplet" "server" {
-  image    = "${var.image}"
-  name     = "nomad-server-${var.region}-${count.index}"
-  count    = 3
-  size     = "${var.size}"
-  region   = "${var.region}"
-  ssh_keys = ["${split(",", var.ssh_keys)}"]
+resource "google_compute_instance" "server" {
+  image         = "${var.image}"
+  name          = "nomad-server-${count.index}"
+  machine_type  = "n1-standard-4"
+  count         = 3
+  size          = "${var.size}"
+  zone          = "${var.zone}"
+  ssh_keys      = ["${split(",", var.ssh_keys)}"]
+  tags          = ["nomad"]
 
   provisioner "remote-exec" {
     inline = <<CMD
 cat > /usr/local/etc/nomad/server.hcl <<EOF
-datacenter = "${var.region}"
+datacenter = "${var.zone}"
 server {
     enabled = true
     bootstrap_expect = 3

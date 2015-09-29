@@ -1,5 +1,5 @@
-variable "size" { default = "1gb" }
-variable "region" {}
+variable "size" { default = "5gb" }
+variable "zone" { default = "us-central1-c"}
 variable "ssh_keys" {}
 
 resource "atlas_artifact" "statsite-gce" {
@@ -9,12 +9,14 @@ resource "atlas_artifact" "statsite-gce" {
 }
 
 resource "google_compute_instance" "statsite" {
-  image    = "${atlas_artifact.statsite-digitalocean.id}"
-  name     = "nomad-statsite-${var.region}-${count.index}"
-  count    = 1
-  size     = "${var.size}"
-  region   = "${var.region}"
-  ssh_keys = ["${split(",", var.ssh_keys)}"]
+  image         = "${atlas_artifact.statsite-digitalocean.id}"
+  name          = "nomad-statsite-${var.zone}-${count.index}"
+  machine_type  = "n1-standard-4"
+  count         = 1
+  size          = "${var.size}"
+  zone          = "${var.zone}"
+  ssh_keys      = ["${split(",", var.ssh_keys)}"]
+  tags          = ["nomad"]
 
   provisioner "remote-exec" {
     inline = "sudo start statsite || true"
@@ -22,5 +24,5 @@ resource "google_compute_instance" "statsite" {
 }
 
 output "addr" {
-  value = "${digitalocean_droplet.statsite.ipv4_address}:8125"
+  value = "${google_compute_instance.statsite.ipv4_address}:8125"
 }
