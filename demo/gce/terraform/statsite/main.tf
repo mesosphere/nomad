@@ -3,6 +3,12 @@ variable "zone" { default = "us-central1-c"}
 variable "ssh_keys" {}
 variable "image" {}
 
+provider "google" "nomad-demo" {
+      account_file  = "${file("auth.json")}"
+      project       = "massive-bliss-781"
+      region        = "us-central1-c"
+    }
+
 resource "atlas_artifact" "statsite-gce" {
   name    = "hashicorp/nomad-demo-statsite-gce"
   type    = "googlecompute.image"

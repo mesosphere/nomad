@@ -5,6 +5,12 @@ variable "size" { default = "10" }
 variable "servers" {}
 variable "ssh_keys" {}
 
+  provider "google" "nomad-demo" {
+    account_file  = "${file("auth.json")}"
+    project       = "massive-bliss-781"
+    region        = "us-central1-c"
+  }
+
 resource "template_file" "client_config" {
   filename = "${path.module}/client.hcl.tpl"
   vars {
