@@ -1,6 +1,7 @@
 variable "size" { default = "5gb" }
 variable "zone" { default = "us-central1-c"}
 variable "ssh_keys" {}
+variable "image" {}
 
 resource "atlas_artifact" "statsite-gce" {
   name    = "hashicorp/nomad-demo-statsite"
@@ -14,8 +15,8 @@ resource "google_compute_instance" "statsite" {
   count         = 1
   zone          = "${var.zone}"
   disk {
-    image       = "${var.image}"
-    size        = "${var.size}"
+    image         = "${var.image}"
+    size          = "${var.size}"
   }
   ssh_keys      = ["${split(",", var.ssh_keys)}"]
   tags          = ["nomad"]
