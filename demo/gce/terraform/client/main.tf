@@ -14,11 +14,13 @@ resource "template_file" "client_config" {
 }
 
 resource "google_compute_instance" "client" {
-  image         = "${var.image}"
   name          = "nomad-client-${count.index}"
   count         = "${var.count}"
-  size          = "${var.size}"
   zone          = "${var.zone}"
+  disk {
+    image         = "${var.image}"
+    size          = "${var.size}"
+  }
   ssh_keys      = ["${split(",", var.ssh_keys)}"]
   machine_type  = "n1-standard-2"
   tags          = ["nomad"]

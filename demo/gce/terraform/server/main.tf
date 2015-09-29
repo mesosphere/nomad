@@ -5,12 +5,14 @@ variable "ssh_keys" {}
 variable "statsite" {}
 
 resource "google_compute_instance" "server" {
-  image         = "${var.image}"
   name          = "nomad-server-${count.index}"
   machine_type  = "n1-standard-4"
   count         = 3
-  size          = "${var.size}"
   zone          = "${var.zone}"
+  disk {
+    image       = "${var.image}"
+    size        = "${var.size}"
+  }
   ssh_keys      = ["${split(",", var.ssh_keys)}"]
   tags          = ["nomad"]
 
