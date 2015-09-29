@@ -9,7 +9,7 @@ resource "atlas_artifact" "statsite-gce" {
 }
 
 resource "google_compute_instance" "statsite" {
-  image         = "${atlas_artifact.statsite-digitalocean.id}"
+  image         = "${atlas_artifact.statsite-gce.id}"
   name          = "nomad-statsite-${var.zone}-${count.index}"
   machine_type  = "n1-standard-4"
   count         = 1
