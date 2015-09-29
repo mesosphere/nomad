@@ -43,7 +43,7 @@ resource "null_resource" "server_join" {
   provisioner "local-exec" {
     command = <<CMD
 join() {
-  curl -X PUT ${digitalocean_droplet.server.0.ipv4_address}:4646/v1/agent/join?address=$1
+  curl -X PUT ${google_compute_instance.server.0.ipv4_address}:4646/v1/agent/join?address=$1
 }
 join ${google_compute_instance.server.1.ipv4_address}
 join ${google_compute_instance.server.2.ipv4_address}
@@ -52,5 +52,5 @@ CMD
 }
 
 output "addrs" {
-  value = "${join(",", digitalocean_droplet.server.*.ipv4_address)}"
+  value = "${join(",", google_compute_instance.server.*.ipv4_address)}"
 }
