@@ -4,7 +4,7 @@ variable "ssh_keys" {}
 variable "image" {}
 
 resource "atlas_artifact" "statsite-gce" {
-  name    = "hashicorp/nomad-demo-statsite"
+  name    = "hashicorp/nomad-demo-statsite-gce"
   type    = "googlecompute.image"
   version = "latest"
 }
