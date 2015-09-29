@@ -1,6 +1,6 @@
 variable "image" {}
 variable "zone" { default = "us-central1-c"}
-variable "size" { default = "10gb" }
+variable "size" { default = "10" }
 variable "ssh_keys" {}
 variable "statsite" {}
 variable "count" {}

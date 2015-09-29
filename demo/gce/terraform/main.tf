@@ -20,7 +20,7 @@ module "statsite" {
 
 module "servers" {
   source   = "./server"
-  image    = "${atlas_artifact.nomad-demo-gce.id}"
+  image    = "${atlas_artifact.nomad-demo.id}"
   count    = 1
   ssh_keys = "${var.ssh_keys}"
   statsite = "${module.statsite.addr}"
@@ -30,7 +30,7 @@ module "clients" {
   source   = "./client"
   zone     = "us-central1-c"
   count    = 4
-  image    = "${atlas_artifact.nomad-demo-gce.id}"
+  image    = "${atlas_artifact.nomad-demo.id}"
   servers  = "${module.servers.addrs}"
   ssh_keys = "${var.ssh_keys}"
 }

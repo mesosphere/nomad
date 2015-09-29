@@ -1,4 +1,4 @@
-variable "size" { default = "5gb" }
+variable "size" { default = "5" }
 variable "zone" { default = "us-central1-c"}
 variable "ssh_keys" {}
 variable "image" {}
