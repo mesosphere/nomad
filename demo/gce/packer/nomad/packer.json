@@ -14,7 +14,8 @@
       "type": "googlecompute",
       "project_id": "massive-bliss-781",
       "source_image": "ubuntu-1404-trusty-v20150909a",
-      "zone": "us-central1-c"
+      "zone": "us-central1-c",
+      "image_name": "packer-{{timestamp}}"
     }
   ],
   "provisioners": [
