@@ -2,13 +2,13 @@ variable "size" { default = "1gb" }
 variable "region" {}
 variable "ssh_keys" {}
 
-resource "atlas_artifact" "statsite-digitalocean" {
+resource "atlas_artifact" "statsite-gce" {
   name    = "hashicorp/nomad-demo-statsite"
-  type    = "digitalocean.image"
+  type    = "googlecompute.image"
   version = "latest"
 }
 
-resource "digitalocean_droplet" "statsite" {
+resource "google_compute_instance" "statsite" {
   image    = "${atlas_artifact.statsite-digitalocean.id}"
   name     = "nomad-statsite-${var.region}-${count.index}"
   count    = 1
