@@ -14,7 +14,6 @@ provider "google" "nomad-demo" {
 
 module "statsite" {
   source   = "./statsite"
-  ssh_keys = "${var.ssh_keys}"
   image    = "${atlas_artifact.nomad-demo-statsite-gce.id}"
 }
 
@@ -22,7 +21,6 @@ module "servers" {
   source   = "./server"
   image    = "${atlas_artifact.nomad-demo.id}"
   count    = 1
-  ssh_keys = "${var.ssh_keys}"
   statsite = "${module.statsite.addr}"
 }
 
@@ -32,7 +30,6 @@ module "clients" {
   count    = 4
   image    = "${atlas_artifact.nomad-demo.id}"
   servers  = "${module.servers.addrs}"
-  ssh_keys = "${var.ssh_keys}"
 }
 
 /*module "clients-ams2" {

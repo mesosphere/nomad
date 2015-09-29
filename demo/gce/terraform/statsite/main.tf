@@ -1,6 +1,5 @@
 variable "size" { default = "5" }
 variable "zone" { default = "us-central1-c"}
-variable "ssh_keys" {}
 variable "image" {}
 
 provider "google" "nomad-demo" {
@@ -10,7 +9,7 @@ provider "google" "nomad-demo" {
     }
 
 resource "atlas_artifact" "statsite-gce" {
-  name    = "hashicorp/nomad-demo-statsite-gce"
+  name    = "timfall/nomad-demo-statsite-gce"
   type    = "googlecompute.image"
   version = "latest"
 }
@@ -24,7 +23,6 @@ resource "google_compute_instance" "statsite" {
     image         = "${var.image}"
     size          = "${var.size}"
   }
-  ssh_keys      = ["${split(",", var.ssh_keys)}"]
   tags          = ["nomad"]
 
   provisioner "remote-exec" {

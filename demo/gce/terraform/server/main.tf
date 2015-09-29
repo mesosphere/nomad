@@ -1,9 +1,14 @@
 variable "image" {}
 variable "zone" { default = "us-central1-c"}
 variable "size" { default = "10" }
-variable "ssh_keys" {}
 variable "statsite" {}
 variable "count" {}
+
+provider "google" "nomad-demo" {
+      account_file  = "${file("auth.json")}"
+      project       = "massive-bliss-781"
+      region        = "us-central1-c"
+    }
 
 resource "google_compute_instance" "server" {
   name          = "nomad-server-${count.index}"
@@ -14,7 +19,6 @@ resource "google_compute_instance" "server" {
     image       = "${var.image}"
     size        = "${var.size}"
   }
-  ssh_keys      = ["${split(",", var.ssh_keys)}"]
   tags          = ["nomad"]
 
   provisioner "remote-exec" {

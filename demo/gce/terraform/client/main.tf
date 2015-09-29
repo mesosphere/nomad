@@ -3,9 +3,8 @@ variable "image" {}
 variable "zone" { default = "us-central1-c"}
 variable "size" { default = "10" }
 variable "servers" {}
-variable "ssh_keys" {}
 
-  provider "google" "nomad-demo" {
+provider "google" "nomad-demo" {
     account_file  = "${file("auth.json")}"
     project       = "massive-bliss-781"
     region        = "us-central1-c"
@@ -27,7 +26,6 @@ resource "google_compute_instance" "client" {
     image       = "${var.image}"
     size        = "${var.size}"
   }
-  ssh_keys      = ["${split(",", var.ssh_keys)}"]
   machine_type  = "n1-standard-2"
   tags          = ["nomad"]
 
