@@ -6,6 +6,12 @@ resource "atlas_artifact" "nomad-demo" {
   version = "latest"
 }
 
+provider "google" "nomad-demo" {
+  account_file  = "${file("auth.json")}"
+  project       = "massive-bliss-781"
+  region        = "us-central1-c"
+}
+
 module "statsite" {
   source   = "./statsite"
   ssh_keys = "${var.ssh_keys}"
