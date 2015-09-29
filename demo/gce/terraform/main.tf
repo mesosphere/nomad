@@ -14,7 +14,7 @@ provider "google" "nomad-demo" {
 
 module "statsite" {
   source   = "./statsite"
-  image    = "${atlas_artifact.nomad-demo-statsite-gce.id}"
+  image    = "${atlas_artifact.nomad-demo-gce.id}"
 }
 
 module "servers" {
