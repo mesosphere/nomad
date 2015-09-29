@@ -1,0 +1,65 @@
+{
+  "variables": {
+    "bin_url": "{{ env `STATSITE_URL` }}"
+  },
+  "builders": [
+    {
+      "type": "digitalocean",
+      "image": "ubuntu-12-04-x64",
+      "region": "nyc3",
+      "size": "512mb",
+      "snapshot_name": "nomad-demo-statsite-{{timestamp}}"
+    },
+    {
+      "type": "googlecompute",
+      "project_id": "massive-bliss-781",
+      "source_image": "ubuntu-1404-trusty-v20150909a",
+      "zone": "us-central1-c"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sudo apt-get -y update",
+        "sudo apt-get -y install unzip build-essential scons",
+        "curl -o /tmp/statsite.zip -L {{ user `bin_url` }}",
+        "mkdir -p /tmp/statsite",
+        "unzip -d /tmp/statsite /tmp/statsite.zip",
+        "cd /tmp/statsite/* && make",
+        "mv /tmp/statsite/*/statsite /usr/local/bin",
+        "rm -rf /tmp/statsite"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "upstart.statsite",
+      "destination": "/etc/init/statsite.conf"
+    },
+    {
+      "type": "file",
+      "source": "default.conf",
+      "destination": "/usr/local/etc/statsite.conf"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "atlas",
+      "artifact": "timfall/nomad-demo-statsite-do",
+      "artifact_type": "digitalocean.image"
+    },
+    {
+      "type": "atlas",
+      "artifact": "timfall/nomad-demo-statsite-gce",
+      "artifact_type": "googlecompute.image"
+    }
+  ],
+  "push": {
+    "name": "timfall/nomad-demo-statsite-do",
+    "vcs": true
+  },
+  "push": {
+    "name": "timfall/nomad-demo-statsite-gce",
+    "vcs": true
+  }
+}
