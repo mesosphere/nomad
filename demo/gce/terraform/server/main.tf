@@ -3,6 +3,7 @@ variable "zone" { default = "us-central1-c"}
 variable "size" { default = "10gb" }
 variable "ssh_keys" {}
 variable "statsite" {}
+variable "count" {}
 
 resource "google_compute_instance" "server" {
   name          = "nomad-server-${count.index}"
