@@ -6,7 +6,7 @@ resource "atlas_artifact" "nomad-demo" {
   version = "latest"
 }
 
-provider "google" "nomad-demo" {
+provider "google" {
   account_file  = "${file("auth.json")}"
   project       = "massive-bliss-781"
   region        = "us-central1-c"

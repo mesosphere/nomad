@@ -3,12 +3,7 @@ variable "image" {}
 variable "zone" { default = "us-central1-c"}
 variable "size" { default = "10" }
 variable "servers" {}
-
-provider "google" "nomad-demo" {
-    account_file  = "${file("auth.json")}"
-    project       = "massive-bliss-781"
-    region        = "us-central1-c"
-  }
+variable "address" {}
 
 resource "template_file" "client_config" {
   filename = "${path.module}/client.hcl.tpl"
@@ -18,6 +13,11 @@ resource "template_file" "client_config" {
   }
 }
 
+resource "google_compute_address" "client-address" {
+  name = "nomad-address-${var.zone}-${var.count}"
+  count         = "${var.count}"
+}
+
 resource "google_compute_instance" "client" {
   name          = "nomad-client-${count.index}"
   count         = "${var.count}"
@@ -25,6 +25,12 @@ resource "google_compute_instance" "client" {
   disk {
     image       = "${var.image}"
     size        = "${var.size}"
+  }
+  network_interface {
+    network     = "nomad"
+    access_config = {
+      nat_ip = "${google_compute_address.client-address.address}"
+    }
   }
   machine_type  = "n1-standard-2"
   tags          = ["nomad"]

@@ -4,11 +4,10 @@ variable "size" { default = "10" }
 variable "statsite" {}
 variable "count" {}
 
-provider "google" "nomad-demo" {
-      account_file  = "${file("auth.json")}"
-      project       = "massive-bliss-781"
-      region        = "us-central1-c"
-    }
+resource "google_compute_address" "server-address" {
+    name = "nomad-address-${var.zone}-${var.count}"
+    count         = 3
+  }
 
 resource "google_compute_instance" "server" {
   name          = "nomad-server-${count.index}"
@@ -18,6 +17,12 @@ resource "google_compute_instance" "server" {
   disk {
     image       = "${var.image}"
     size        = "${var.size}"
+  }
+  network_interface {
+    network     = "nomad"
+    access_config = {
+      nat_ip = "${google_compute_address.server-address.address}"
+    }
   }
   tags          = ["nomad"]
 
@@ -50,14 +55,14 @@ resource "null_resource" "server_join" {
   provisioner "local-exec" {
     command = <<CMD
 join() {
-  curl -X PUT ${google_compute_instance.server.0.ipv4_address}:4646/v1/agent/join?address=$1
+  curl -X PUT ${google_compute_address.statsite-address.0.address}:4646/v1/agent/join?address=$1
 }
-join ${google_compute_instance.server.1.ipv4_address}
-join ${google_compute_instance.server.2.ipv4_address}
+join ${google_compute_address.statsite-address.1.address}
+join ${google_compute_address.statsite-address.2.address}
 CMD
   }
 }
 
 output "addrs" {
-  value = "${join(",", google_compute_instance.server.*.ipv4_address)}"
+  value = "${join(",", google_compute_address.statsite-address.*.address)}"
 }
