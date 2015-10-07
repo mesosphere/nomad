@@ -3,10 +3,9 @@ variable "image" {}
 variable "zone" { default = "us-central1-c"}
 variable "size" { default = "10" }
 variable "servers" {}
-variable "address" {}
 
 resource "template_file" "client_config" {
-  filename = "${path.module}/client.hcl.tpl"
+  filename     = "${path.module}/client.hcl.tpl"
   vars {
     datacenter = "${var.zone}"
     servers    = "${split(",", var.servers)}"
@@ -14,7 +13,7 @@ resource "template_file" "client_config" {
 }
 
 resource "google_compute_address" "client-address" {
-  name = "nomad-address-${var.zone}-${var.count}"
+  name          = "nomad-address-${var.zone}-${var.count}"
   count         = "${var.count}"
 }
 
@@ -27,13 +26,13 @@ resource "google_compute_instance" "client" {
     size        = "${var.size}"
   }
   network_interface {
-    network     = "nomad"
+    network       = "nomad"
     access_config = {
-      nat_ip = "${google_compute_address.client-address.address}"
+      nat_ip      = "${element(google_compute_address.client-address.address, count.index)}"
     }
   }
-  machine_type  = "n1-standard-2"
-  tags          = ["nomad"]
+  machine_type    = "n1-standard-2"
+  tags            = ["nomad"]
 
 
   provisioner "remote-exec" {

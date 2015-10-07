@@ -5,8 +5,8 @@ variable "statsite" {}
 variable "count" {}
 
 resource "google_compute_address" "server-address" {
-    name = "nomad-address-${var.zone}-${var.count}"
-    count         = 3
+    name  = "nomad-address-${var.zone}-${var.count}"
+    count = 3
   }
 
 resource "google_compute_instance" "server" {
@@ -19,9 +19,9 @@ resource "google_compute_instance" "server" {
     size        = "${var.size}"
   }
   network_interface {
-    network     = "nomad"
+    network       = "nomad"
     access_config = {
-      nat_ip = "${google_compute_address.server-address.address}"
+      nat_ip      = "${element(google_compute_address.server-address.*.address, count.index)}"
     }
   }
   tags          = ["nomad"]
@@ -55,14 +55,14 @@ resource "null_resource" "server_join" {
   provisioner "local-exec" {
     command = <<CMD
 join() {
-  curl -X PUT ${google_compute_address.statsite-address.0.address}:4646/v1/agent/join?address=$1
+  curl -X PUT ${element(google_compute_address.server-address.*.address, 0)}:4646/v1/agent/join?address=$1
 }
-join ${google_compute_address.statsite-address.1.address}
-join ${google_compute_address.statsite-address.2.address}
+join ${element(google_compute_address.server-address.*.address, 1)}
+join ${element(google_compute_address.server-address.*.address, 2)}
 CMD
   }
 }
 
 output "addrs" {
-  value = "${join(",", google_compute_address.statsite-address.*.address)}"
+  value = "${join(",", google_compute_address.server-address.*.address)}"
 }
